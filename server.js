@@ -11,7 +11,7 @@ mongoose
     useFindAndModify: false,
   })
   .then(() => {
-    console.log('Connected to the DB 😎');
+    console.log('Connected to the DB');
   });
 
 const port = PORT || 2727;
