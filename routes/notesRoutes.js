@@ -1,9 +1,9 @@
 const router = require('express').Router();
 
 const {
-  readAllNotes
+  createNote
 } = require('../controllers/notesControllers')
 
-router.route('/').get(readAllNotes);
+router.route('/').post(createNote);
 
 module.exports = router;

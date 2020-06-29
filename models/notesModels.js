@@ -9,6 +9,11 @@ const NoteSchema = new Schema({
   author: {
     type: String,
     required: true,
+    minlength: 5,
+    maxlength: 20,
+    //type: Schema.ObjectId,
+    //ref: 'User',
+    //required: true
   },
   title: {
     type: String,

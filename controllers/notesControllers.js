@@ -1,9 +1,9 @@
+const Notes = require('../models/notesModels');
+const { createOne } = require('./crudFactory');
 
-const readAllNotes = (req, res) => res.status(200).json({
-  status: 'success',
-  data: 'notes'
-})
+
+const createNote = createOne(Notes)
 
 module.exports = {
-  readAllNotes
+  createNote
 };
