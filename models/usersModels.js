@@ -78,6 +78,6 @@ userSchema.methods.createPassResToken = function () {
   return resetToken;
 };
 
-const User = mongoose.model('User', UserSchema);
+const User = model('User', UserSchema);
 
 module.exports = User;
