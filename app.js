@@ -17,5 +17,7 @@ app.use((req, res, next) => {
 
 const notesRouter = require('./routes/notesRoutes');
 app.use('/api/v1/notes', notesRouter);
+const userRouter = require('./routes/userRoutes');
+app.use('/api/v1/users', userRouter);
 
 module.exports = app;
