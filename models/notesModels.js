@@ -1,11 +1,13 @@
 const { Schema, model } = require('mongoose');
 
-const NOTE_TYPES = ['twitters', 'articles', 'notes'];
-
 const NoteSchema = new Schema({
   type: {
     type: String,
-    enum: NOTE_TYPES,
+    enum: ['twitters', 'articles', 'notes'],
+    required: true,
+  },
+  author: {
+    type: String,
     required: true,
   },
   title: {
@@ -27,6 +29,10 @@ const NoteSchema = new Schema({
   twitterName: {
     type: String,
     default: null,
+  },
+  public: {
+    type: Boolean,
+    default: false,
   },
   userID: {
     type: String,
