@@ -6,10 +6,8 @@ const Users = require('../models/usersModels');
 // Check if user is logged
 const protectRoute = catchAsync(async (req, res, next) => {
   let token;
-
   // 1) Checking is token exists
   if (req.header.authorization && req.header.authorization.startsWith('Bearer')) {
-    console.log(req.header.authorization);
     token = req.header.authorization.split(' ')[1];
   } else if (req.cookies.jwt) {
     token = req.cookies.jwt;
