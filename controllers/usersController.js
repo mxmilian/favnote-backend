@@ -42,13 +42,15 @@ const signUp = catchAsync(async (req, res, next) => {
 const signIn = catchAsync(async (req, res, next) => {
   const { name, email, password } = req.body;
 
-  if ((!name && !email) || !password) return next(new Errors('Please input email or password!', 400));
+  if ((!name && !email) || !password)
+    return next(new Errors('Please input email or password!', 400));
 
   const user = name
     ? await Users.findOne({ name }).select('+password')
     : await Users.findOne({ email }).select('+password');
 
-  if (!user || !(await bcrypt.compare(password, user.password))) return next();
+  if (!user || !(await bcrypt.compare(password, user.password)))
+    return next(new Errors('Email or username or password is invalid!', 401));
 
   createSendToken(user, 200, res, 'Logged successfully');
 });

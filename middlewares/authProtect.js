@@ -12,19 +12,19 @@ const protectRoute = catchAsync(async (req, res, next) => {
   } else if (req.cookies.jwt) {
     token = req.cookies.jwt;
   }
-  if (!token) return next(console.log('token invalid'));
+  if (!token) return next(new Errors('Please sign in!', 401));
 
   // 2) Verify the token
   const decodedToken = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   // 3) Check if user still exists
   const isUserExists = await Users.findById(decodedToken.id);
-  if (!isUserExists) return next(console.log('user not exists anymore'));
+  if (!isUserExists) return next(new Errors('This user is not exists!', 401));
 
   // 4) Check if user changed password after the token was issued
   if (isUserExists.passwordChangedAt) {
     const changedTimestamp = parseInt(isUserExists.passwordChangedAt.getTime() / 1000, 10);
-    if (changedTimestamp > decodedToken.iat) return next('Password was changed!');
+    if (changedTimestamp > decodedToken.iat) return next(new Errors('Password was changed!', 401));
   }
 
   //Create req.user to be available in next middleware
@@ -37,7 +37,7 @@ const protectRoute = catchAsync(async (req, res, next) => {
 const restrictRoute = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role))
-      return next(console.log('You do not have permission to get access'));
+      return next(new Errors('You do not have permission to access that!', 401));
     next();
   };
 };
@@ -55,7 +55,7 @@ const isCurrentlySignIn = async (req, res, next) => {
       // 3) Check if user changed password after the token was issued
       if (isUserExists.passwordChangedAt) {
         const changedTimestamp = parseInt(isUserExists.passwordChangedAt.getTime() / 1000, 10);
-        if (changedTimestamp > decodedToken.iat) return next('Password was changed!');
+        if (changedTimestamp > decodedToken.iat) return next(new Errors('Password was changed!', 401));
       }
 
       // THERE IS A LOGGED IN USER
