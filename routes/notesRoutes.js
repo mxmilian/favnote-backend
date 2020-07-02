@@ -3,7 +3,7 @@ const { protectRoute } = require('../middlewares/authProtect');
 
 const {
   createNote
-} = require('../controllers/notesControllers')
+} = require('../controllers/notesController')
 
 // Protect all routes after this middleware
 router.use(protectRoute);

@@ -1,7 +1,7 @@
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const catchAsync = require('../errors/catchAsync');
-const Users = require('../models/usersModels');
+const Users = require('../models/usersModel');
 
 // Check if user is logged
 const protectRoute = catchAsync(async (req, res, next) => {

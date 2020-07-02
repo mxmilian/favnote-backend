@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const cookieParser = require('cookie-parser');
+const { errorController } = require('./controllers/errorController');
 
 app.use(helmet());
 app.use(mongoSanitize());
@@ -20,5 +21,7 @@ const notesRouter = require('./routes/notesRoutes');
 app.use('/api/v1/notes', notesRouter);
 const userRouter = require('./routes/userRoutes');
 app.use('/api/v1/users', userRouter);
+
+app.use(errorController);
 
 module.exports = app;

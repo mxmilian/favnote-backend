@@ -1,7 +1,8 @@
-const Users = require('../models/usersModels');
+const Users = require('../models/usersModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const catchAsync = require('../errors/catchAsync');
+const Errors = require('../errors/Errors');
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -41,7 +42,7 @@ const signUp = catchAsync(async (req, res, next) => {
 const signIn = catchAsync(async (req, res, next) => {
   const { name, email, password } = req.body;
 
-  if ((!name && !email) || !password) return next();
+  if ((!name && !email) || !password) return next(new Errors('Please input email or password!', 400));
 
   const user = name
     ? await Users.findOne({ name }).select('+password')
