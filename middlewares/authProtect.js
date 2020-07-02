@@ -2,6 +2,7 @@ const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const catchAsync = require('../errors/catchAsync');
 const Users = require('../models/usersModel');
+const Errors = require('../errors/Errors');
 
 // Check if user is logged
 const protectRoute = catchAsync(async (req, res, next) => {
@@ -12,7 +13,7 @@ const protectRoute = catchAsync(async (req, res, next) => {
   } else if (req.cookies.jwt) {
     token = req.cookies.jwt;
   }
-  if (!token) return next(new Errors('Please sign in!', 401));
+  if (!token) return next(new Errors('You are not logged!', 401));
 
   // 2) Verify the token
   const decodedToken = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
@@ -42,6 +43,7 @@ const restrictRoute = (...roles) => {
   };
 };
 
+// This just checking is user is currently logged but without throwing any error :)
 const isCurrentlySignIn = async (req, res, next) => {
   if (req.cookies.jwt) {
     try {
@@ -55,7 +57,8 @@ const isCurrentlySignIn = async (req, res, next) => {
       // 3) Check if user changed password after the token was issued
       if (isUserExists.passwordChangedAt) {
         const changedTimestamp = parseInt(isUserExists.passwordChangedAt.getTime() / 1000, 10);
-        if (changedTimestamp > decodedToken.iat) return next(new Errors('Password was changed!', 401));
+        if (changedTimestamp > decodedToken.iat)
+          return next(new Errors('Password was changed!', 401));
       }
 
       // THERE IS A LOGGED IN USER
@@ -71,5 +74,5 @@ const isCurrentlySignIn = async (req, res, next) => {
 module.exports = {
   protectRoute,
   restrictRoute,
-  isCurrentlySignIn
+  isCurrentlySignIn,
 };
