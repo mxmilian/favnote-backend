@@ -12,7 +12,7 @@ const {
 router.use(protectRoute);
 
 router.route('/').post(createNote).get(readAllNotes);
-router.route('/:id').get(readNote);
 router.route('/type').get(readAllNotesOfOneType);
+router.route('/type/:id').get(readNote);
 
 module.exports = router;

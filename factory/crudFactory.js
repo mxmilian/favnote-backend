@@ -24,7 +24,6 @@ const readOne = (Model) =>
 
 const readAll = (Model) =>
   catchAsync(async (req, res, next) => {
-    console.log(req.user._id);
     const readDoc = await Model.find({ userID: req.user._id });
     res.status(200).json({
       status: 'success',
@@ -36,8 +35,8 @@ const readAll = (Model) =>
 
 const readAllOneType = (Model) =>
   catchAsync(async (req, res, next) => {
-    console.log(req);
-    const readDoc = await Model.find({ author: req.user._id, type: req.query.type });
+    console.log(req.query)
+    const readDoc = await Model.find({ userID: req.user._id, type: req.query.type });
     res.status(200).json({
       status: 'success',
       data: {
