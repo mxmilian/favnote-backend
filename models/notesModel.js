@@ -7,9 +7,9 @@ const NoteSchema = new Schema({
     required: true,
   },
   author: {
-    type: Schema.ObjectId,
+    type: String,
     ref: 'User',
-    required: true
+    required: true,
   },
   title: {
     type: String,
@@ -36,7 +36,8 @@ const NoteSchema = new Schema({
     default: false,
   },
   userID: {
-    type: String,
+    type: Schema.ObjectId,
+    ref: 'User',
     required: true,
   },
 });
