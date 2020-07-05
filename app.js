@@ -5,11 +5,13 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const cookieParser = require('cookie-parser');
 const { errorController } = require('./controllers/errorController');
+const cors = require('cors');
 
 app.use(helmet());
 app.use(mongoSanitize());
 app.use(morgan('dev'));
 app.disable('etag');
+app.use(cors());
 app.use(json());
 app.use(cookieParser());
 app.use((req, res, next) => {
