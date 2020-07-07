@@ -45,4 +45,15 @@ const readAllOneType = (Model) =>
     });
   });
 
-module.exports = { readOne, readAll, readAllOneType };
+const deleteOne = (Model) => catchAsync(async (req, res, next) => {
+  const deletedDoc = await Model.findByIdAndDelete(req.query.id);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      deletedDoc
+    }
+  })
+});
+
+module.exports = { readOne, readAll, readAllOneType, deleteOne };
