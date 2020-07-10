@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const catchAsync = require('../errors/catchAsync');
 const Errors = require('../errors/Errors');
+const { readAll } = require('../factory/crudFactory');
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -63,4 +64,14 @@ const logOut = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: 'success' });
 });
 
-module.exports = { signUp, signIn, logOut };
+const readAllUsers = catchAsync(async (req, res, next) => {
+  const readDoc = await Users.find();
+  res.status(200).json({
+    status: 'success',
+    data: {
+      readDoc,
+    },
+  });
+});
+
+module.exports = { signUp, signIn, logOut, readAllUsers };

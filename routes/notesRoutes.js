@@ -14,6 +14,6 @@ router.use(protectRoute);
 
 router.route('/').post(createNote).get(readAllNotes).delete(deleteNote);
 router.route('/type').get(readAllNotesOfOneType);
-router.route('/type/:id').get(readNote);
+router.route('/:id').get(readNote);
 
 module.exports = router;
