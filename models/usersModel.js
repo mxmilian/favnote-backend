@@ -49,6 +49,10 @@ const UserSchema = new Schema({
       //This works only for CREATE and SAVE
       validator: () => this.password === this.confirmPassword,
     },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    },
   },
   passwordChangedAt: Date,
   passwordResetToken: String,
