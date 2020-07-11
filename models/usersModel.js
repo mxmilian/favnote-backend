@@ -39,7 +39,7 @@ const UserSchema = new Schema({
     enum: ['user', 'admin'],
     default: 'user',
   },
-  friends: [{ type: Schema.Types.ObjectId, ref: 'Friends' }],
+  friends: [{ type: Schema.Types.ObjectId, ref: 'Friend' }],
   confirmPassword: {
     type: String,
     required: true,

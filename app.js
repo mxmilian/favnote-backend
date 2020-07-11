@@ -23,6 +23,8 @@ const notesRouter = require('./routes/notesRoutes');
 app.use('/api/v1/notes', notesRouter);
 const userRouter = require('./routes/userRoutes');
 app.use('/api/v1/users', userRouter);
+const friendsRouter = require('./routes/friendsRoutes');
+app.use('/api/v1/friends', friendsRouter);
 
 app.use(errorController);
 
