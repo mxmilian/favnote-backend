@@ -11,7 +11,6 @@ const reqFriend = catchAsync(async (req, res, next) => {
     { $set: { status: 1 } },
     { upsert: true, new: true },
   );
-  console.log('XD');
   const docB = await Friend.findOneAndUpdate(
     { recipient: UserA, requester: UserB },
     { $set: { status: 2 } },
@@ -31,6 +30,42 @@ const reqFriend = catchAsync(async (req, res, next) => {
   });
 });
 
+const checkFriends = catchAsync(async (req, res, next) => {
+  const user = await User.aggregate([
+    {
+      $lookup: {
+        from: Friend.collection.name,
+        let: { friends: '$friends' },
+        pipeline: [
+          {
+            $match: {
+              recipient: req.user._id,
+              $expr: { $in: ['$_id', '$$friends'] },
+            },
+          },
+          { $project: { status: 1 } },
+        ],
+        as: 'friends',
+      },
+    },
+    {
+      $addFields: {
+        friendsStatus: {
+          $ifNull: [{ $min: '$friends.status' }, 0],
+        },
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user,
+    },
+  });
+});
+
 module.exports = {
   reqFriend,
+  checkFriends,
 };
