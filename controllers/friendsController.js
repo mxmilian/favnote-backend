@@ -30,6 +30,45 @@ const reqFriend = catchAsync(async (req, res, next) => {
   });
 });
 
+const accFriend = catchAsync(async (req, res, next) => {
+  const UserA = await User.find({ _id: req.user._id });
+  const UserB = await User.find({ _id: req.body._id });
+
+  await Friend.findOneAndUpdate({ requester: UserA, recipient: UserB }, { $set: { status: 3 } });
+  const docB = await Friend.findOneAndUpdate(
+    { recipient: UserA, requester: UserB },
+    { $set: { status: 3 } },
+  );
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      message: 'Accepted success',
+      accepted: docB,
+    },
+  });
+});
+
+const rejFriend = catchAsync(async (req, res, next) => {
+  const UserA = await User.find({ _id: req.user._id });
+  const UserB = await User.find({ _id: req.body._id });
+
+  const docA = await Friend.findOneAndRemove({ requester: UserA, recipient: UserB });
+  const docB = await Friend.findOneAndRemove({ recipient: UserA, requester: UserB });
+  const updateUserA = await User.findOneAndUpdate({ _id: UserA }, { $pull: { friends: docA._id } });
+  const updateUserB = await User.findOneAndUpdate({ _id: UserB }, { $pull: { friends: docB._id } });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      docA,
+      docB,
+      updateUserA,
+      updateUserB,
+    },
+  });
+});
+
 const checkFriends = catchAsync(async (req, res, next) => {
   const user = await User.aggregate([
     {
@@ -68,4 +107,6 @@ const checkFriends = catchAsync(async (req, res, next) => {
 module.exports = {
   reqFriend,
   checkFriends,
+  accFriend,
+  rejFriend,
 };
