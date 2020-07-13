@@ -6,6 +6,6 @@ router.use(protectRoute);
 router.route('/').get(checkFriends);
 router.route('/req').post(reqFriend);
 router.route('/acc').post(accFriend);
-router.route('rej').post(rejFriend);
+router.route('/rej').post(rejFriend);
 
 module.exports = router;
