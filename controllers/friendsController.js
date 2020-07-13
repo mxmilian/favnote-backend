@@ -4,7 +4,7 @@ const catchAsync = require('../errors/catchAsync');
 
 const reqFriend = catchAsync(async (req, res, next) => {
   const UserA = await User.find({ _id: req.user._id });
-  const UserB = await User.find({ _id: req.body._id });
+  const UserB = await User.find({ _id: req.body.id });
 
   const docA = await Friend.findOneAndUpdate(
     { requester: UserA, recipient: UserB },
@@ -18,21 +18,46 @@ const reqFriend = catchAsync(async (req, res, next) => {
   );
   const updateUserA = await User.findOneAndUpdate({ _id: UserA }, { $push: { friends: docA._id } });
   const updateUserB = await User.findOneAndUpdate({ _id: UserB }, { $push: { friends: docB._id } });
+  const reqUser = Object.values(await User.aggregate([
+    {
+      $lookup: {
+        from: Friend.collection.name,
+        let: { friends: '$friends' },
+        pipeline: [
+          {
+            $match: {
+              recipient: req.user._id,
+              $expr: { $in: ['$_id', '$$friends'] },
+            },
+          },
+          {
+            $project: { status: 1 },
+          },
+        ],
+        as: 'friends',
+      },
+    },
+    {
+      $addFields: {
+        friendsStatus: {
+          $ifNull: [{ $min: '$friends.status' }, 0],
+        },
+      },
+    },
+  ])).filter((el) => JSON.stringify(req.body.id) === JSON.stringify(el._id));
+
 
   res.status(201).json({
     status: 'success',
     data: {
-      docA,
-      docB,
-      updateUserA,
-      updateUserB,
+      reqUser,
     },
   });
 });
 
 const accFriend = catchAsync(async (req, res, next) => {
   const UserA = await User.find({ _id: req.user._id });
-  const UserB = await User.find({ _id: req.body._id });
+  const UserB = await User.find({ _id: req.body.id });
 
   await Friend.findOneAndUpdate({ requester: UserA, recipient: UserB }, { $set: { status: 3 } });
   const docB = await Friend.findOneAndUpdate(
@@ -51,7 +76,7 @@ const accFriend = catchAsync(async (req, res, next) => {
 
 const rejFriend = catchAsync(async (req, res, next) => {
   const UserA = await User.find({ _id: req.user._id });
-  const UserB = await User.find({ _id: req.body._id });
+  const UserB = await User.find({ _id: req.body.id });
 
   const docA = await Friend.findOneAndRemove({ requester: UserA, recipient: UserB });
   const docB = await Friend.findOneAndRemove({ recipient: UserA, requester: UserB });
@@ -82,7 +107,9 @@ const checkFriends = catchAsync(async (req, res, next) => {
               $expr: { $in: ['$_id', '$$friends'] },
             },
           },
-          { $project: { status: 1 } },
+          {
+            $project: { status: 1 },
+          },
         ],
         as: 'friends',
       },
@@ -99,6 +126,7 @@ const checkFriends = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     data: {
+      userID: req.user._id,
       user,
     },
   });
