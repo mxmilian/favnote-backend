@@ -6,13 +6,14 @@ const {
   readNote,
   readAllNotes,
   readAllNotesOfOneType,
-  deleteNote
+  deleteNote,
+  updateNote,
 } = require('../controllers/notesController');
 
 // Protect all routes after this middleware
 router.use(protectRoute);
 
-router.route('/').post(createNote).get(readAllNotes).delete(deleteNote);
+router.route('/').post(createNote).get(readAllNotes).delete(deleteNote).patch(updateNote);
 router.route('/type').get(readAllNotesOfOneType);
 router.route('/:id').get(readNote);
 
