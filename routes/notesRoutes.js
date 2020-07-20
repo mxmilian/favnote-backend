@@ -13,8 +13,8 @@ const {
 // Protect all routes after this middleware
 router.use(protectRoute);
 
-router.route('/').post(createNote).get(readAllNotes).delete(deleteNote).patch(updateNote);
+router.route('/').post(createNote).get(readAllNotes);
 router.route('/type').get(readAllNotesOfOneType);
-router.route('/:id').get(readNote);
+router.route('/:id').get(readNote).delete(deleteNote).patch(updateNote);
 
 module.exports = router;

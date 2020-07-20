@@ -47,7 +47,7 @@ const readAllOneType = (Model) =>
 
 const deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    const deletedDoc = await Model.findByIdAndDelete(req.query.id);
+    const deletedDoc = await Model.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
       status: 'success',
@@ -59,7 +59,7 @@ const deleteOne = (Model) =>
 
 const updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    const updatedDoc = await Model.findByIdAndUpdate(req.query.id, req.body, {
+    const updatedDoc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
