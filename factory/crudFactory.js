@@ -35,7 +35,7 @@ const readAll = (Model) =>
 
 const readAllOneType = (Model) =>
   catchAsync(async (req, res, next) => {
-    console.log(req.query)
+    console.log(req.query);
     const readDoc = await Model.find({ userID: req.user._id, type: req.query.type });
     res.status(200).json({
       status: 'success',
@@ -45,15 +45,40 @@ const readAllOneType = (Model) =>
     });
   });
 
-const deleteOne = (Model) => catchAsync(async (req, res, next) => {
-  const deletedDoc = await Model.findByIdAndDelete(req.query.id);
+const deleteOne = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const deletedDoc = await Model.findByIdAndDelete(req.query.id);
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      deletedDoc
-    }
-  })
-});
+    res.status(200).json({
+      status: 'success',
+      data: {
+        deletedDoc,
+      },
+    });
+  });
 
-module.exports = { readOne, readAll, readAllOneType, deleteOne };
+const updateOne = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const updatedDoc = await Model.findByIdAndUpdate(req.query.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedDoc)
+      res.status(200).json({
+        status: 'fail',
+        data: {
+          message: 'Not document fount to update!',
+        },
+      });
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        message: 'Doc updated',
+        updatedDoc
+      },
+    });
+  });
+
+module.exports = { readOne, readAll, readAllOneType, deleteOne, updateOne };
