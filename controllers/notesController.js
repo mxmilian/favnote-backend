@@ -1,6 +1,6 @@
 const Notes = require('../models/notesModel');
 const catchAsync = require('../errors/catchAsync');
-const { readOne, readAll, readAllOneType, deleteOne } = require('../factory/crudFactory');
+const { readOne, readAll, readAllOneType, deleteOne, updateOne } = require('../factory/crudFactory');
 
 const createNote = catchAsync(async (req, res, next) => {
   const createdDoc = await Notes.create({
@@ -24,11 +24,13 @@ const readNote = readOne(Notes);
 const readAllNotes = readAll(Notes);
 const readAllNotesOfOneType = readAllOneType(Notes);
 const deleteNote = deleteOne(Notes);
+const updateNote = updateOne(Notes);
 
 module.exports = {
   createNote,
   readNote,
   readAllNotes,
   readAllNotesOfOneType,
-  deleteNote
+  deleteNote,
+  updateNote
 };
