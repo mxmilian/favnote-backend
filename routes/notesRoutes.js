@@ -4,6 +4,7 @@ const { protectRoute } = require('../middlewares/authProtect');
 const {
   createNote,
   readNote,
+  readSharedNotes,
   readAllNotes,
   readAllNotesOfOneType,
   deleteNote,
@@ -14,6 +15,7 @@ const {
 router.use(protectRoute);
 
 router.route('/').post(createNote).get(readAllNotes);
+router.route('/shared').get(readSharedNotes);
 router.route('/type').get(readAllNotesOfOneType);
 router.route('/:id').get(readNote).delete(deleteNote).patch(updateNote);
 

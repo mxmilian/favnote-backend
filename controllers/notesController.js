@@ -1,6 +1,13 @@
 const Notes = require('../models/notesModel');
+const Friend = require('../models/friendsModel');
 const catchAsync = require('../errors/catchAsync');
-const { readOne, readAll, readAllOneType, deleteOne, updateOne } = require('../factory/crudFactory');
+const {
+  readOne,
+  readAll,
+  readAllOneType,
+  deleteOne,
+  updateOne,
+} = require('../factory/crudFactory');
 
 const createNote = catchAsync(async (req, res, next) => {
   const createdDoc = await Notes.create({
@@ -20,6 +27,22 @@ const createNote = catchAsync(async (req, res, next) => {
   });
 });
 
+const readSharedNotes = catchAsync(async (req, res, next) => {
+  const friends = await Friend.find({ requester: req.user._id, status: 3 });
+
+  const friendsID = friends.map((el) => el.recipient);
+  const sharedNotes = await Notes.find({ userID: { $in: friendsID } });
+
+  console.log(sharedNotes);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      sharedNotes,
+    },
+  });
+});
+
 const readNote = readOne(Notes);
 const readAllNotes = readAll(Notes);
 const readAllNotesOfOneType = readAllOneType(Notes);
@@ -29,8 +52,9 @@ const updateNote = updateOne(Notes);
 module.exports = {
   createNote,
   readNote,
+  readSharedNotes,
   readAllNotes,
   readAllNotesOfOneType,
   deleteNote,
-  updateNote
+  updateNote,
 };
