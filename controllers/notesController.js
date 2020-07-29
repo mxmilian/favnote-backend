@@ -31,7 +31,7 @@ const readSharedNotes = catchAsync(async (req, res, next) => {
   const friends = await Friend.find({ requester: req.user._id, status: 3 });
 
   const friendsID = friends.map((el) => el.recipient);
-  const sharedNotes = await Notes.find({ userID: { $in: friendsID }, type: req.query.type });
+  const sharedNotes = await Notes.find({ userID: { $in: friendsID }, type: req.query.type, public: true });
 
   console.log(sharedNotes);
 
