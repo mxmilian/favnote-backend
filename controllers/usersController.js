@@ -74,4 +74,14 @@ const readAllUsers = catchAsync(async (req, res, next) => {
   });
 });
 
-module.exports = { signUp, signIn, logOut, readAllUsers };
+const readUser = catchAsync(async (req, res, next) => {
+  const readDoc = await Users.findById(req.user._id);
+  res.status(200).json({
+    status: 'success',
+    data: {
+      readDoc,
+    },
+  });
+});
+
+module.exports = { signUp, signIn, logOut, readUser, readAllUsers };
