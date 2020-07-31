@@ -8,7 +8,7 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     unique: true,
-    minlength: 10,
+    minlength: 8,
     maxlength: 40,
     trim: true,
     validate: {
