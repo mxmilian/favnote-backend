@@ -14,13 +14,13 @@ const NoteSchema = new Schema({
   title: {
     type: String,
     required: true,
-    minlength: 5,
-    maxlength: 20,
+    minlength: 3,
+    maxlength: 25,
   },
   content: {
     type: String,
     required: true,
-    minlength: 5,
+    minlength: 3,
     maxlength: 250,
   },
   articleUrl: {
