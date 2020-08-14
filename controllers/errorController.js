@@ -1,3 +1,4 @@
+const Error = require('../errors/Errors');
 const { createErrorDev } = require('../factory/errorFactory');
 
 const errorController = (error, req, res, next) => {

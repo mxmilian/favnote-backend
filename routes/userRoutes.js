@@ -11,7 +11,7 @@ const {
 
 router.route('/signup').post(signUp);
 router.route('/signin').post(signIn);
-router.route('/logout').post(logOut);
+router.route('/signout').get(logOut);
 
 router.use(protectRoute);
 router.route('/').get(readAllUsers);

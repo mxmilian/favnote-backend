@@ -35,7 +35,6 @@ const readAll = (Model) =>
 
 const readAllOneType = (Model) =>
   catchAsync(async (req, res, next) => {
-    console.log(req.query);
     const readDoc = await Model.find({ userID: req.user._id, type: req.query.type });
     res.status(200).json({
       status: 'success',
