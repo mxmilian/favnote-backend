@@ -28,8 +28,8 @@ const createNote = catchAsync(async (req, res, next) => {
   });
 });
 
-const readSharedNotes = catchAsync(async (req, res, next) => {
-  // const ownNotes = await Notes.find({ userID: req.user._id, type: req.query.type });
+const readAllNotesWithShared = catchAsync(async (req, res, next) => {
+  const ownNotes = await Notes.find({ userID: req.user._id, type: req.query.type });
   const friends = await Friend.find({ requester: req.user._id, status: 3 });
 
   const friendsID = friends.map((el) => el.recipient);
@@ -44,7 +44,7 @@ const readSharedNotes = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     data: {
-      // ownNotes,
+      ownNotes,
       sharedNotes,
     },
   });
@@ -59,7 +59,7 @@ const updateNote = updateOne(Notes);
 module.exports = {
   createNote,
   readNote,
-  readSharedNotes,
+  readAllNotesWithShared,
   readAllNotes,
   readAllNotesOfOneType,
   deleteNote,
