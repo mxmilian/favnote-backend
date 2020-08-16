@@ -1,32 +1,9 @@
+import {createAccessToken, createRefreshToken} from "utils/authToken";
+import {sendRefreshToken} from "utils/sendRefreshToken";
 const Users = require('../models/usersModel');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const catchAsync = require('../errors/catchAsync');
 const Errors = require('../errors/Errors');
-const { readAll } = require('../factory/crudFactory');
-
-const signToken = (id) =>
-  jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
-
-const createSendToken = (user, statusCode, res, message) => {
-  const token = signToken(user._id);
-  res.cookie('jwt', token, {
-    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
-    httpOnly: true,
-  });
-  user.password = undefined;
-
-  res.status(statusCode).json({
-    status: 'success',
-    data: {
-      token,
-      message,
-      user,
-    },
-  });
-};
 
 const signUp = catchAsync(async (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;
@@ -37,7 +14,15 @@ const signUp = catchAsync(async (req, res, next) => {
     confirmPassword,
   });
   await newUser.save({ validateBeforeSave: false });
-  createSendToken(newUser, 201, res, 'Account created successfully');
+
+  sendRefreshToken(res, createRefreshToken(newUser))
+
+  res.status(200).json({
+    status: 'success',
+    accessToken: createAccessToken(newUser),
+    newUser,
+    message: 'Sign in successfully'
+  })
 });
 
 const signIn = catchAsync(async (req, res, next) => {
@@ -53,7 +38,15 @@ const signIn = catchAsync(async (req, res, next) => {
   if (!user || !(await bcrypt.compare(password, user.password))) {
     return next(new Errors('Incorrect username and password.', 400));
   }
-  createSendToken(user, 200, res, 'Logged successfully');
+  
+  sendRefreshToken(res, createRefreshToken(user))
+  
+  res.status(200).json({
+    status: 'success',
+    accessToken: createAccessToken(user),
+    user,
+    message: 'Sign in successfully'
+  })
 });
 
 const logOut = catchAsync(async (req, res, next) => {

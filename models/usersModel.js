@@ -58,6 +58,10 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  tokenVersion: {
+    type: Number,
+    default: 0
+  },
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
