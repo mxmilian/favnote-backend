@@ -1,5 +1,5 @@
 const { promisify } = require('util');
-const jwt = require('jsonwebtoken');
+const { verify } = require('jsonwebtoken');
 const catchAsync = require('../errors/catchAsync');
 const Users = require('../models/usersModel');
 const Errors = require('../errors/Errors');
@@ -8,18 +8,16 @@ const Errors = require('../errors/Errors');
 const protectRoute = catchAsync(async (req, res, next) => {
   let token;
   // 1) Checking is token exists
-  if (req.header.authorization && req.header.authorization.startsWith('Bearer')) {
-    token = req.header.authorization.split(' ')[1];
-  } else if (req.cookies.jwt) {
-    token = req.cookies.jwt;
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
   }
   if (!token) return next(new Errors('You are not logged!', 401));
 
   // 2) Verify the token
-  const decodedToken = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  const decodedToken = await promisify(verify)(token, process.env.ACCESS_TOKEN_SECRET);
 
   // 3) Check if user still exists
-  const isUserExists = await Users.findById(decodedToken.id);
+  const isUserExists = await Users.findById(decodedToken.userId);
   if (!isUserExists) return next(new Errors('This user is not exists!', 401));
 
   // 4) Check if user changed password after the token was issued
@@ -45,10 +43,10 @@ const restrictRoute = (...roles) => {
 
 // This just checking is user is currently logged but without throwing any error :)
 const isCurrentlySignIn = async (req, res, next) => {
-  if (req.cookies.jwt) {
+  if (req.cookies.jid) {
     try {
       // 1) Verify token
-      const decodedToken = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
+      const decodedToken = await promisify(verify)(req.cookies.jid, process.env.ACCESS_TOKEN_SECRET);
 
       // 2) Check if user still exists
       const currentUser = await Users.findById(decodedToken.id);

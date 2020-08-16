@@ -7,17 +7,13 @@ const cookieParser = require('cookie-parser');
 const { errorController } = require('./controllers/errorController');
 const cors = require('cors');
 
+app.use(cors());
 app.use(helmet());
 app.use(mongoSanitize());
 app.use(morgan('dev'));
 app.disable('etag');
-app.use(cors());
 app.use(json());
 app.use(cookieParser());
-app.use((req, res, next) => {
-  console.log('Welcome');
-  next();
-});
 
 const notesRouter = require('./routes/notesRoutes');
 app.use('/api/v1/notes', notesRouter);

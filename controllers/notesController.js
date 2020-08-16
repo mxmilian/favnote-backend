@@ -39,8 +39,6 @@ const readAllNotesWithShared = catchAsync(async (req, res, next) => {
     public: true,
   });
 
-  console.log(sharedNotes);
-
   res.status(200).json({
     status: 'success',
     data: {
