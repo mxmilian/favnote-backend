@@ -1,5 +1,5 @@
-import {createAccessToken, createRefreshToken} from "utils/authToken";
-import {sendRefreshToken} from "utils/sendRefreshToken";
+const {createAccessToken, createRefreshToken} = require("../utils/authToken");
+const {sendRefreshToken} = require("../utils/sendRefreshToken");
 const Users = require('../models/usersModel');
 const bcrypt = require('bcryptjs');
 const catchAsync = require('../errors/catchAsync');
@@ -17,7 +17,7 @@ const signUp = catchAsync(async (req, res, next) => {
 
   sendRefreshToken(res, createRefreshToken(newUser))
 
-  res.status(200).json({
+  return res.status(200).json({
     status: 'success',
     accessToken: createAccessToken(newUser),
     newUser,
@@ -41,7 +41,7 @@ const signIn = catchAsync(async (req, res, next) => {
   
   sendRefreshToken(res, createRefreshToken(user))
   
-  res.status(200).json({
+  return res.status(200).json({
     status: 'success',
     accessToken: createAccessToken(user),
     user,
