@@ -13,7 +13,7 @@ const catchAsync = require('../errors/catchAsync');
 
 const readOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    const readDoc = await Model.findById(req.params.id);
+    const readDoc = await Model.findById(req.query.id);
     res.status(200).json({
       status: 'success',
       data: {

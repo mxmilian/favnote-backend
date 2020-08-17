@@ -43,12 +43,12 @@ const signIn = catchAsync(async (req, res, next) => {
     return next(new Errors('Incorrect username and password.', 400));
   }
 
-  sendRefreshToken(res, await createRefreshToken(user));
+  sendRefreshToken(res, createRefreshToken(user));
 
   return res.status(200).json({
     status: 'success',
     data: {
-      accessToken: await createAccessToken(user),
+      accessToken: createAccessToken(user),
       user,
       message: 'Sign in successfully',
     },

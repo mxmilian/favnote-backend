@@ -1,6 +1,7 @@
 const Notes = require('../models/notesModel');
 const Friend = require('../models/friendsModel');
 const catchAsync = require('../errors/catchAsync');
+const Errors = require('../errors/Errors');
 const {
   readOne,
   readAll,
@@ -20,6 +21,12 @@ const createNote = catchAsync(async (req, res, next) => {
     author: req.user.name,
     userID: req.user._id,
   });
+
+  console.log('trololo')
+  if(!createdDoc) {
+    return next(new Errors('You are not logged!', 401));
+  }
+
   res.status(201).json({
     status: 'success',
     data: {

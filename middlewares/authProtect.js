@@ -12,7 +12,6 @@ const protectRoute = catchAsync(async (req, res, next) => {
     token = req.headers.authorization.split(' ')[1];
   }
   if (!token) return next(new Errors('You are not logged!', 401));
-
   // 2) Verify the token
   const decodedToken = await promisify(verify)(token, process.env.ACCESS_TOKEN_SECRET);
 
