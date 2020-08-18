@@ -7,6 +7,14 @@ const Errors = require('../errors/Errors');
 const { verify } = require('jsonwebtoken');
 const { promisify } = require('util');
 
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach((el) => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+  return newObj;
+};
+
 const signUp = catchAsync(async (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;
   const newUser = await Users.create({
@@ -80,7 +88,7 @@ const refresh_token = catchAsync(async (req, res, next) => {
     });
   }
 
-  const user = await Users.findOne({_id: payload.userId});
+  const user = await Users.findOne({ _id: payload.userId });
 
   if (!user) {
     return res.status(401).json({
@@ -127,4 +135,25 @@ const readUser = catchAsync(async (req, res, next) => {
   });
 });
 
-module.exports = { signUp, signIn, logOut, readUser, readAllUsers, refresh_token };
+const updateUser = catchAsync(async (req, res, next) => {
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(new Errors('This route is not for password updates.', 400));
+  }
+  const filteredBody = filterObj(req.body, 'name', 'email');
+  // if (req.file) filteredBody.photo = req.file.filename;
+
+  // 3) Update user document
+  const updatedUser = await Users.findByIdAndUpdate(process.env.USERID, filteredBody, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: updatedUser,
+    },
+  });
+});
+
+module.exports = { signUp, signIn, logOut, readUser, readAllUsers, refresh_token, updateUser };
