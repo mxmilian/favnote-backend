@@ -1,4 +1,5 @@
 const catchAsync = require('../errors/catchAsync');
+const Errors = require('../errors/Errors');
 
 // const createOne = (Model) =>
 //   catchAsync(async (req, res, next) => {
@@ -58,24 +59,43 @@ const deleteOne = (Model) =>
 
 const updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
+    const doc = await Model.findById(req.params.id);
+
+    if (!doc)
+      return res.status(200).json({
+        status: 'fail',
+        data: {
+          message: 'Not document found to update!',
+        },
+      });
+
+    if (doc.userID !== req.user._id) {
+      return res.status(200).json({
+        status: 'failure',
+        data: {
+          message: 'You dont have permission to do this!'
+        }
+      })
+    }
+
     const updatedDoc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
 
     if (!updatedDoc)
-      res.status(200).json({
+      return res.status(200).json({
         status: 'fail',
         data: {
-          message: 'Not document fount to update!',
+          message: 'Not document found to update!',
         },
       });
 
-    res.status(200).json({
+    return res.status(200).json({
       status: 'success',
       data: {
         message: 'Doc updated',
-        updatedDoc
+        updatedDoc,
       },
     });
   });
