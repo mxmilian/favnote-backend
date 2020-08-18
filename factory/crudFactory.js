@@ -57,25 +57,25 @@ const deleteOne = (Model) =>
     });
   });
 
-const updateOne = (Model) =>
-  catchAsync(async (req, res, next) => {
+const updateOne = (Model) => {
+  return catchAsync(async (req, res, next) => {
     const doc = await Model.findById(req.params.id);
 
     if (!doc)
-      return res.status(200).json({
+      return res.status(401).json({
         status: 'fail',
         data: {
           message: 'Not document found to update!',
         },
       });
 
-    if (doc.userID !== req.user._id) {
-      return res.status(200).json({
+    if (JSON.stringify(doc.userID) !== JSON.stringify(req.user._id)) {
+      return res.status(400).json({
         status: 'failure',
         data: {
-          message: 'You dont have permission to do this!'
-        }
-      })
+          message: 'You dont have permission to do this!',
+        },
+      });
     }
 
     const updatedDoc = await Model.findByIdAndUpdate(req.params.id, req.body, {
@@ -99,5 +99,6 @@ const updateOne = (Model) =>
       },
     });
   });
+};
 
 module.exports = { readOne, readAll, readAllOneType, deleteOne, updateOne };
