@@ -136,13 +136,12 @@ const readUser = catchAsync(async (req, res, next) => {
 });
 
 const updateUser = catchAsync(async (req, res, next) => {
-  console.log(req.file)
   if (req.body.password || req.body.passwordConfirm) {
     return next(new Errors('This route is not for password updates.', 400));
   }
   const filteredBody = filterObj(req.body, 'name', 'email');
   // if (req.file) filteredBody.photo = req.file.filename;
-
+  if (req.file) filteredBody.photo = req.file.filename;
   // 3) Update user document
   const updatedUser = await Users.findByIdAndUpdate(process.env.USERID, filteredBody, {
     new: true,
