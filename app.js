@@ -1,5 +1,5 @@
-const { json, static } = require('express');
-const app = require('express')();
+const express = require('express');
+const app = express();
 const morgan = require('morgan');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -13,9 +13,9 @@ app.use(helmet());
 app.use(mongoSanitize());
 app.use(morgan('dev'));
 app.disable('etag');
-app.use(json());
+app.use(express.json());
 app.use(cookieParser());
-app.use(static(path.join(__dirname, 'public')));
+app.use('/static', express.static(path.join(__dirname, 'public')));
 
 const notesRouter = require('./routes/notesRoutes');
 app.use('/api/v1/notes', notesRouter);
