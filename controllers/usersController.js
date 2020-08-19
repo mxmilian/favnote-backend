@@ -136,6 +136,7 @@ const readUser = catchAsync(async (req, res, next) => {
 });
 
 const updateUser = catchAsync(async (req, res, next) => {
+  console.log(req.file)
   if (req.body.password || req.body.passwordConfirm) {
     return next(new Errors('This route is not for password updates.', 400));
   }
