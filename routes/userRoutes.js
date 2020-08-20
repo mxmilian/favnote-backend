@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { protectRoute } = require('../middlewares/authProtect');
-const { uploadUserPhoto } = require('../utils/mutlerConf');
+const { uploadUserPhoto, resizeUserPhoto, } = require('../utils/mutlerConf');
 
 const {
   signUp,
@@ -16,7 +16,7 @@ router.route('/signup').post(signUp);
 router.route('/signin').post(signIn);
 router.route('/signout').get(logOut);
 router.route('/refresh_token').post(refresh_token);
-router.route('/updateUser').patch(uploadUserPhoto, updateUser);
+router.route('/updateUser').patch(uploadUserPhoto, resizeUserPhoto, updateUser);
 
 router.use(protectRoute);
 router.route('/').get(readAllUsers);
